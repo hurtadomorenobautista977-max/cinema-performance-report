@@ -25,18 +25,18 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configure GitHub Pages
-        if: ${{ hashFiles('rooz-cinema-1405-07-01.pdf') != '' }}
+        if: ${{ hashFiles('rooz-cinema-1405-07-01.pdf.pdf') != '' }}
         uses: actions/configure-pages@v5
         with:
           enablement: true
 
       - name: Upload site artifact
-        if: ${{ hashFiles('rooz-cinema-1405-07-01.pdf') != '' }}
+        if: ${{ hashFiles('rooz-cinema-1405-07-01.pdf.pdf') != '' }}
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
 
       - name: Deploy to GitHub Pages
-        if: ${{ hashFiles('rooz-cinema-1405-07-01.pdf') != '' }}
+        if: ${{ hashFiles('rooz-cinema-1405-07-01.pdf.pdf') != '' }}
         id: deployment
         uses: actions/deploy-pages@v4
