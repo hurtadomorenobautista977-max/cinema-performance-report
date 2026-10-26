@@ -1,0 +1,43 @@
+name: Replace cinema report PDF
+
+on:
+  push:
+    paths:
+      - 'pdf_upload_parts/**'
+
+permissions:
+  contents: write
+
+jobs:
+  install-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout complete repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reconstruct and verify updated PDF
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          parts=(pdf_upload_parts/*.b64)
+          if (( ${#parts[@]} == 0 )); then
+            echo "No upload parts; nothing to do."
+            exit 0
+          fi
+          cat "${parts[@]}" | base64 --decode > rooz-cinema-1405-07-01.pdf.pdf
+          actual="$(sha256sum rooz-cinema-1405-07-01.pdf.pdf | cut -d ' ' -f 1)"
+          expected="761cf7f8b2b9f955a20faa6d74d10ebfd7e185c3024ae769806cd2e44be7d5ff"
+          if [[ "$actual" != "$expected" ]]; then
+            echo "::error::PDF checksum mismatch"
+            exit 1
+          fi
+          test "$(wc -c < rooz-cinema-1405-07-01.pdf.pdf)" -eq 5083610
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- rooz-cinema-1405-07-01.pdf.pdf
+          git rm -r -q -- pdf_upload_parts
+          git commit -m "Replace cinema report PDF with updated October 8 version"
+          git push origin HEAD:main
