@@ -35,8 +35,14 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
+          name: github-pages-${{ github.run_attempt }}
+
+      - name: Allow artifact metadata to become available
+        run: sleep 20
 
       - name: Deploy to GitHub Pages
         if: ${{ hashFiles('rooz-cinema-1405-07-01.pdf.pdf') != '' }}
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
